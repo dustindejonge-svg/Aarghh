@@ -45,6 +45,16 @@
     box-shadow:var(--shadow);font-size:15px}
   .section-title{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
     margin:22px 4px 8px}
+
+  /* ---------- Subject filter (pill row inside Lessons / Term overviews) ---------- */
+  .subj-filter{display:flex;flex-wrap:nowrap;gap:6px;padding:4px 0 12px;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px}
+  .subj-pill{flex:0 0 auto;border:1.5px solid transparent;background:var(--card);
+    color:var(--ink);padding:7px 13px;border-radius:20px;font-size:13px;font-weight:600;
+    cursor:pointer;white-space:nowrap;box-shadow:var(--shadow)}
+  .subj-pill:hover{border-color:rgba(0,0,0,0.08)}
+  .subj-pill.active{color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+  .subj-pill.all.active{background:var(--brown)}
   .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
     padding:14px 16px;margin-bottom:10px;border-left:5px solid #ccc;position:relative}
   .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
@@ -268,6 +278,28 @@ function dueLabel(s){
   return {txt:`In ${n} days`,cls:"ok"};
 }
 
+/* ---------- Subject filter (per-view, persisted to localStorage) ---------- */
+let _lastData = null;
+function getFilter(view){
+  let s = "all";
+  try { s = localStorage.getItem("aarghh_filter_"+view) || "all"; } catch(e){}
+  return s;
+}
+function setFilter(view, subject){
+  try { localStorage.setItem("aarghh_filter_"+view, subject); } catch(e){}
+  if(view==="lessons" && _lastData) renderLessons(_lastData);
+  if(view==="terms"   && _lastData) renderTerms(_lastData);
+}
+function subjFilterBar(view, subs, current){
+  const pills = [`<button class="subj-pill all${current==="all"?" active":""}" onclick="setFilter('${view}','all')">All</button>`];
+  subs.forEach(s=>{
+    const active = current===s;
+    const bg = active ? `style="background:${subjColor(s)};border-color:${subjColor(s)}"` : "";
+    pills.push(`<button class="subj-pill${active?" active":""}" ${bg} onclick="setFilter('${view}','${s}')">${subjName(s)}</button>`);
+  });
+  return `<div class="subj-filter">${pills.join("")}</div>`;
+}
+
 /* ---------- Get data (demo or Supabase) ---------- */
 async function getData(){
   if(CONFIG.USE_DEMO_DATA){ DEMO.lastUpdated=CONFIG.LAST_UPDATED; return DEMO; }
@@ -343,8 +375,13 @@ function renderLessons(data){
   if(!subs.length){
     html+=`<div class="empty"><img src="images/egg-hmm.png" alt="Egg puzzled"><p>No lesson outlines yet, dude. They'll show up once the lessons get summarised.</p></div>`;
   } else {
-    subs.forEach(s=>{
-      html+=`<div class="section-title" style="color:${subjColor(s)}">${subjName(s)}</div>`;
+    let current = getFilter("lessons");
+    if(current !== "all" && !subs.includes(current)) current = "all";
+    html += subjFilterBar("lessons", subs, current);
+    const showSubs = (current === "all") ? subs : [current];
+    showSubs.forEach(s=>{
+      // When a single subject is selected, skip the section title — the pill already tells you.
+      if(current === "all") html+=`<div class="section-title" style="color:${subjColor(s)}">${subjName(s)}</div>`;
       bySub[s].sort((a,b)=>(parseD(b.lesson_date)||0)-(parseD(a.lesson_date)||0)).forEach(l=>{
         html+=`<div class="card" style="border-left-color:${subjColor(s)}">
           <h3>${l.title}</h3>
@@ -364,7 +401,13 @@ function renderTerms(data){
   if(!data.termOverviews.length){
     html+=`<div class="empty"><img src="images/egg-hmm.png" alt="Egg puzzled"><p>No term overviews yet — they're on the way.</p></div>`;
   } else {
-    data.termOverviews.slice().sort((a,b)=>(b.term-a.term)||subjName(a.subject).localeCompare(subjName(b.subject))).forEach(t=>{
+    const subsWith = Array.from(new Set(data.termOverviews.map(t=>t.subject)));
+    const orderedSubs = Object.keys(SUBJECTS).filter(s=>subsWith.includes(s));
+    let current = getFilter("terms");
+    if(current !== "all" && !orderedSubs.includes(current)) current = "all";
+    html += subjFilterBar("terms", orderedSubs, current);
+    const filtered = current === "all" ? data.termOverviews : data.termOverviews.filter(t=>t.subject===current);
+    filtered.slice().sort((a,b)=>(b.term-a.term)||subjName(a.subject).localeCompare(subjName(b.subject))).forEach(t=>{
       const topics=(t.topics&&t.topics.length)
         ? `<ul class="term-topics">${t.topics.map(x=>`<li>${x}</li>`).join("")}</ul>` : "";
       const rel=(data.assessments||[]).filter(a=>a.subject===t.subject && a.term===t.term)
@@ -503,6 +546,7 @@ async function boot(){
   if(CONFIG.USE_DEMO_DATA) document.getElementById("demoFlag").style.display="block";
   try{
     const data=await getData();
+    _lastData = data;
     renderMeta(data); renderAssessments(data); renderLessons(data); renderTerms(data); renderEquations(data); renderSpace(data);
     const next=data.assessments.filter(a=>a.status==="upcoming").map(a=>daysUntil(a.due_date)).filter(n=>n!==null&&n>=0).sort((a,b)=>a-b)[0];
     if(next!==undefined){
