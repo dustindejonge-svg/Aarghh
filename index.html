@@ -415,17 +415,17 @@ function card(a){
 }
 
 function renderAssessments(data){
+  // Submitted assessments are dropped from the source files (see assessments.md
+  // notes — "done = deleted" applies to both submitted and graded). We only
+  // render the upcoming list now.
   const up=data.assessments.filter(a=>a.status==="upcoming")
     .sort((x,y)=>(parseD(x.due_date)||0)-(parseD(y.due_date)||0));
-  const aw=data.assessments.filter(a=>a.status==="awaiting_results")
-    .sort((x,y)=>(parseD(y.due_date)||0)-(parseD(x.due_date)||0));
   let html=`<div class="view-head">
     <img src="images/egg-calendar.png" alt="Egg with a calendar">
     <div class="speak">Here's what's coming up, dude. Soonest first — don't get dumped by a deadline!</div>
   </div>`;
   if(up.length){ html+=`<div class="section-title">Upcoming</div>`+up.map(card).join(""); }
   else { html+=`<div class="empty"><img src="images/egg-chill.png" alt="Egg relaxing"><p>All clear, dude — nothing due right now. Go catch a wave.</p></div>`; }
-  if(aw.length){ html+=`<div class="section-title">Submitted — waiting on results</div>`+aw.map(card).join(""); }
   document.getElementById("view-assessments").innerHTML=html;
 }
 
