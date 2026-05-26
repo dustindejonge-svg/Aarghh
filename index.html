@@ -35,12 +35,26 @@
     box-shadow:0 14px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(124,92,255,0.18) inset;
     background:#0a0e2c}
   header.banner img.hero{width:100%;height:auto;display:block}
-  .greet-row{display:flex;align-items:flex-start;gap:14px;padding:14px 4px 0}
-  .greet-row img.egg{height:88px;width:auto;flex:none;
-    filter:drop-shadow(0 6px 14px rgba(0,0,0,0.4))}
-  .bubble{background:var(--cream);color:var(--ink);display:inline-block;
-    padding:9px 13px;border-radius:14px;border-bottom-left-radius:2px;
-    font-size:14px;box-shadow:var(--shadow);margin-top:6px}
+  .greet-row{display:flex;align-items:flex-start;gap:18px;padding:16px 4px 0}
+  .greet-egg{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px}
+  .greet-egg img.egg{height:150px;width:auto;
+    filter:drop-shadow(0 8px 18px rgba(0,0,0,0.45))}
+  .greet-egg .egg-name{
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:18px;font-weight:800;letter-spacing:1px;
+    color:var(--gold);text-shadow:0 2px 6px rgba(0,0,0,0.65), 0 0 14px rgba(244,205,88,0.35);
+    margin-top:-2px}
+  .bubble{background:var(--cream);color:var(--ink);
+    padding:12px 16px;border-radius:18px;border-bottom-left-radius:3px;
+    font-size:14px;line-height:1.5;box-shadow:var(--shadow);
+    flex:1 1 0;min-width:0;margin-top:10px;position:relative}
+  /* Speech-bubble tail pointing at Egg (roughly at his face/mouth height) */
+  .bubble::before{content:"";position:absolute;left:-10px;top:40px;width:0;height:0;
+    border:9px solid transparent;border-right-color:var(--cream);border-left:0}
+  .bubble .greet-line{font-weight:700;color:var(--ink)}
+  .bubble .bubble-rule{height:1px;background:rgba(0,0,0,0.08);margin:8px 0}
+  .bubble .bubble-disclaimer{font-size:13px;color:#5c4f3d;font-style:italic}
+  .bubble .bubble-disclaimer b{color:var(--apple-red);font-style:normal}
 
   /* ---------- Tabs ---------- */
   nav.tabs{position:sticky;top:0;z-index:5;
@@ -76,6 +90,15 @@
   .card{background:var(--card);color:var(--ink);
     border-radius:var(--radius);box-shadow:var(--shadow);
     padding:14px 16px;margin-bottom:10px;border-left:5px solid #ccc;position:relative}
+  /* Tests pop with a warm amber background + red TEST badge so they stand out
+     from coursework assessments. Subject border-left stays so you can still
+     see which subject it belongs to. */
+  .card.is-test{
+    background:linear-gradient(160deg, #fff4d0 0%, #ffe5a3 100%);
+    box-shadow:0 6px 18px rgba(217,67,75,0.20), 0 0 0 1px rgba(217,67,75,0.18) inset;
+    border-left-width:6px}
+  .test-badge{background:var(--apple-red);color:#fff;font-size:10px;font-weight:800;
+    letter-spacing:0.6px;padding:2px 7px;border-radius:20px;margin-left:6px;vertical-align:middle}
   .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
   .chip{font-size:11px;font-weight:700;color:#fff;padding:3px 9px;border-radius:20px;white-space:nowrap}
   .card h3{margin:6px 0 2px;font-size:16px}
@@ -127,14 +150,11 @@
   .foot{text-align:center;font-size:12px;color:var(--on-dark);margin-top:30px;opacity:0.7}
   .demo-flag{background:var(--gold);color:#1d1a1f;text-align:center;font-size:12px;
     font-weight:700;padding:5px}
-  /* meta bar (last updated + coverage disclaimer) — sits on the dark backdrop */
-  .meta-bar{max-width:880px;margin:0 auto;padding:10px 4px 2px}
+  /* meta bar (last updated) — sits on the dark backdrop. The coverage
+     disclaimer that used to live here now sits inside Egg's speech bubble. */
+  .meta-bar{max-width:880px;margin:0 auto;padding:8px 4px 2px}
   .meta-bar .updated{font-size:12px;color:var(--on-dark);margin-bottom:6px}
   .meta-bar .updated b{color:#fff}
-  .meta-bar .disclaimer{font-size:12px;color:var(--on-dark-strong);
-    background:rgba(124,92,255,0.16);border:1px solid rgba(124,92,255,0.4);
-    border-radius:10px;padding:9px 12px;line-height:1.45}
-  .meta-bar .disclaimer b{color:var(--gold)}
 </style>
 </head>
 <body>
@@ -170,14 +190,20 @@ const CONFIG = {
       <img class="hero" src="images/banner.jpeg" alt="Aarghh! — Arleena's Actually Really Good Homework Helper">
     </header>
     <div class="greet-row">
-      <img class="egg" src="images/egg-hello.png" alt="Egg the eagle waving">
-      <div class="bubble" id="greeting">Yo Arleena! Egg here. Let's check what's on, dude.</div>
+      <div class="greet-egg">
+        <img class="egg" src="images/egg-hello.png" alt="Egg the eagle waving">
+        <div class="egg-name">Egg</div>
+      </div>
+      <div class="bubble" id="greeting">
+        <div class="greet-line" id="greetLine">Yo Arleena! Egg here. Let's check what's on, dude.</div>
+        <div class="bubble-rule"></div>
+        <div class="bubble-disclaimer" id="coverage"></div>
+      </div>
     </div>
   </div>
 
   <div class="meta-bar">
     <div class="updated" id="lastUpdated"></div>
-    <div class="disclaimer" id="coverage"></div>
   </div>
 
   <nav class="tabs">
@@ -359,16 +385,30 @@ function renderMeta(data){
   document.getElementById("coverage").innerHTML = msg;
 }
 
+/* Tests get a warm-amber card + red "TEST" badge so they stand out from
+   coursework assessments. We detect tests by title (matches the regex in
+   eggify/parse_outlines.py and sync_aarghh.py) — keep these three in sync. */
+const TEST_TITLE_RE   = /\b(test|exam|cat|naplan)\b/i;
+const TEST_EXCLUDE_RE = /\b(practice|revision|recap|prep|review|study)\b/i;
+function isTest(title){
+  if(!title) return false;
+  if(TEST_EXCLUDE_RE.test(title)) return false;
+  return TEST_TITLE_RE.test(title);
+}
+
 function card(a){
   const due=dueLabel(a.due_date);
   const newBadge = a.isNew ? '<span class="badge-new">NEW</span>' : '';
   const formal = a.formal ? '<span class="formal">CAT/EXAM</span>' : '';
-  return `<div class="card" style="border-left-color:${subjColor(a.subject)}">
+  const test = isTest(a.title);
+  const testBadge = test ? '<span class="test-badge">TEST</span>' : '';
+  const testCls = test ? ' is-test' : '';
+  return `<div class="card${testCls}" style="border-left-color:${subjColor(a.subject)}">
     <div class="top">
       <span class="chip" style="background:${subjColor(a.subject)}">${subjName(a.subject)}</span>
       <span class="due ${due.cls}">${due.txt}</span>
     </div>
-    <h3>${a.title}${formal}${newBadge}</h3>
+    <h3>${a.title}${formal}${testBadge}${newBadge}</h3>
     <div class="meta">Due ${fmt(a.due_date)} · Term ${a.term||"?"}</div>
     ${a.desc?`<div class="adesc">${a.desc}</div>`:""}
   </div>`;
@@ -623,7 +663,7 @@ async function boot(){
       const g=next===0?"You've got something due today, dude — let's get on it!":
               next<=3?`Heads up — something's due in ${next} day${next===1?"":"s"}. We've got this.`:
               "Nothing urgent today. Cruisy. Let's stay ahead of it.";
-      document.getElementById("greeting").textContent="Yo Arleena! "+g;
+      document.getElementById("greetLine").textContent="Yo Arleena! "+g;
     }
     let last="assessments"; try{last=localStorage.getItem("aarghh_tab")||"assessments";}catch(e){}
     showTab(last);
