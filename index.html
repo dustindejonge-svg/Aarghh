@@ -6,36 +6,53 @@
 <title>Aarghh! — Arleena's homework helper</title>
 <style>
   :root{
-    --brown:#6b4a2b; --brown-dark:#4f3720; --cream:#f7f0e3; --gold:#f4b740;
-    --ink:#2b2117; --muted:#8a7a66; --bg:#fbf7ef; --card:#ffffff;
-    --shadow:0 6px 18px rgba(79,55,32,.12); --radius:16px;
-    --english:#7c5cff; --maths:#2f80ed; --science:#27ae60;
-    --pe:#f2994a; --visual-arts:#eb5ca0; --musicianship:#11999e;
+    /* Space + apple theme */
+    --gold:#f4cd58; --gold-deep:#b9941e; --apple-red:#d9434b;
+    --nebula-cyan:#3aa3d8; --nebula-purple:#7c5cff;
+    --space-deep:#0a0e2c; --space-mid:#1f1a3f; --space-glow:#2c1f4f;
+    --cream:#f7f0e3; --card:#ffffff; --ink:#1d1a1f;
+    --muted:#8a7a82;                /* muted text INSIDE cards */
+    --on-dark:#cdd4ee;               /* secondary text on dark background */
+    --on-dark-strong:#f1f3ff;        /* primary text on dark background */
+    --shadow:0 6px 18px rgba(0,0,0,.35);
+    --radius:16px;
+    /* Subject accents — bumped saturation so they pop on dark backgrounds */
+    --english:#a07cff; --maths:#62b8ff; --science:#5dd39e;
+    --pe:#ffb262; --visual-arts:#ff8ec5; --musicianship:#56e0e0;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg);color:var(--ink);line-height:1.5}
+    background:
+      radial-gradient(900px 600px at 15% -10%, rgba(124,92,255,0.18), transparent 60%),
+      radial-gradient(700px 500px at 85% 110%, rgba(58,163,216,0.12), transparent 65%),
+      linear-gradient(180deg, var(--space-deep) 0%, var(--space-mid) 60%, var(--space-deep) 100%);
+    background-attachment:fixed;
+    color:var(--on-dark-strong);line-height:1.5;min-height:100vh}
   .wrap{max-width:880px;margin:0 auto;padding:0 16px 64px}
 
-  /* ---------- Banner ---------- */
-  header.banner{background:linear-gradient(135deg,var(--brown) 0%,var(--brown-dark) 100%);
-    color:var(--cream);position:relative;overflow:hidden}
-  .banner-inner{max-width:880px;margin:0 auto;padding:18px 16px;display:flex;align-items:center;gap:16px}
-  .banner img.egg{height:120px;width:auto;filter:drop-shadow(0 4px 8px rgba(0,0,0,.25));flex:none}
-  .banner h1{margin:0;font-size:30px;letter-spacing:.5px}
-  .banner h1 .bang{color:var(--gold)}
-  .banner .sub{margin:2px 0 0;font-size:13px;opacity:.85}
-  .bubble{margin-top:8px;background:var(--cream);color:var(--ink);display:inline-block;
-    padding:8px 12px;border-radius:14px;border-bottom-left-radius:2px;font-size:14px;box-shadow:var(--shadow)}
+  /* ---------- Banner (hero image) ---------- */
+  header.banner{margin:14px 0 0;border-radius:var(--radius);overflow:hidden;
+    box-shadow:0 14px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(124,92,255,0.18) inset;
+    background:#0a0e2c}
+  header.banner img.hero{width:100%;height:auto;display:block}
+  .greet-row{display:flex;align-items:flex-start;gap:14px;padding:14px 4px 0}
+  .greet-row img.egg{height:88px;width:auto;flex:none;
+    filter:drop-shadow(0 6px 14px rgba(0,0,0,0.4))}
+  .bubble{background:var(--cream);color:var(--ink);display:inline-block;
+    padding:9px 13px;border-radius:14px;border-bottom-left-radius:2px;
+    font-size:14px;box-shadow:var(--shadow);margin-top:6px}
 
   /* ---------- Tabs ---------- */
-  nav.tabs{position:sticky;top:0;z-index:5;background:var(--bg);
-    border-bottom:1px solid #eaecd00;box-shadow:0 2px 8px rgba(79,55,32,.06)}
-  .tabs-inner{max-width:880px;margin:0 auto;display:flex;gap:4px;padding:8px 12px;
+  nav.tabs{position:sticky;top:0;z-index:5;
+    background:rgba(10,14,44,0.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    box-shadow:0 6px 14px rgba(0,0,0,0.3);
+    margin-top:16px;border-radius:14px}
+  .tabs-inner{max-width:880px;margin:0 auto;display:flex;gap:4px;padding:8px 10px;
     overflow-x:auto;-webkit-overflow-scrolling:touch}
   .tab{flex:1 0 auto;border:none;background:transparent;padding:10px 12px;border-radius:12px;
-    font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
-  .tab.active{background:var(--brown);color:var(--cream)}
+    font-size:13px;font-weight:600;color:var(--on-dark);cursor:pointer;white-space:nowrap}
+  .tab.active{background:var(--gold);color:#1d1a1f;box-shadow:0 4px 12px rgba(244,205,88,0.35)}
 
   /* ---------- Cards ---------- */
   .view{padding-top:18px}
@@ -43,18 +60,18 @@
   .view-head img{height:84px;width:auto;flex:none}
   .view-head .speak{background:var(--card);border-radius:14px;padding:10px 14px;
     box-shadow:var(--shadow);font-size:15px}
-  .section-title{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
-    margin:22px 4px 8px}
+  .section-title{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--gold);
+    margin:22px 4px 8px;text-shadow:0 1px 4px rgba(0,0,0,0.5)}
 
   /* ---------- Subject filter (pill row inside Lessons / Term overviews) ---------- */
   .subj-filter{display:flex;flex-wrap:nowrap;gap:6px;padding:4px 0 12px;
     overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px}
-  .subj-pill{flex:0 0 auto;border:1.5px solid transparent;background:var(--card);
+  .subj-pill{flex:0 0 auto;border:1.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.94);
     color:var(--ink);padding:7px 13px;border-radius:20px;font-size:13px;font-weight:600;
-    cursor:pointer;white-space:nowrap;box-shadow:var(--shadow)}
-  .subj-pill:hover{border-color:rgba(0,0,0,0.08)}
-  .subj-pill.active{color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
-  .subj-pill.all.active{background:var(--brown)}
+    cursor:pointer;white-space:nowrap;box-shadow:0 4px 10px rgba(0,0,0,0.25)}
+  .subj-pill:hover{border-color:rgba(244,205,88,0.5)}
+  .subj-pill.active{color:#fff;box-shadow:0 4px 14px rgba(0,0,0,0.4)}
+  .subj-pill.all.active{background:var(--gold);color:#1d1a1f}
   .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
     padding:14px 16px;margin-bottom:10px;border-left:5px solid #ccc;position:relative}
   .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
@@ -92,23 +109,30 @@
   .empty p{font-size:15px;margin:10px 0 0}
 
   /* ---------- Login ---------- */
-  #login{display:none;max-width:360px;margin:60px auto;background:var(--card);
-    padding:26px;border-radius:var(--radius);box-shadow:var(--shadow);text-align:center}
+  #login{display:none;max-width:360px;margin:60px auto;
+    background:rgba(255,255,255,0.98);
+    padding:26px;border-radius:var(--radius);
+    box-shadow:0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(124,92,255,0.2) inset;
+    text-align:center;color:var(--ink)}
   #login img{height:130px}
-  #login input{width:100%;padding:11px;margin:6px 0;border:1px solid #e4d9c5;border-radius:10px;font-size:15px}
+  #login h2{color:var(--ink);margin:6px 0}
+  #login input{width:100%;padding:11px;margin:6px 0;border:1px solid #d6d6e0;
+    border-radius:10px;font-size:15px;background:#fff;color:var(--ink)}
   #login button{width:100%;padding:12px;margin-top:8px;border:none;border-radius:10px;
-    background:var(--brown);color:var(--cream);font-size:15px;font-weight:700;cursor:pointer}
+    background:var(--gold);color:#1d1a1f;font-size:15px;font-weight:700;cursor:pointer;
+    box-shadow:0 4px 12px rgba(244,205,88,0.4)}
   #login .err{color:#c0392b;font-size:13px;min-height:18px;margin-top:6px}
-  .foot{text-align:center;font-size:12px;color:var(--muted);margin-top:30px}
-  .demo-flag{background:var(--gold);color:#3a2b10;text-align:center;font-size:12px;
+  .foot{text-align:center;font-size:12px;color:var(--on-dark);margin-top:30px;opacity:0.7}
+  .demo-flag{background:var(--gold);color:#1d1a1f;text-align:center;font-size:12px;
     font-weight:700;padding:5px}
-  /* meta bar (last updated + coverage disclaimer) */
-  .meta-bar{max-width:880px;margin:0 auto;padding:10px 16px 2px}
-  .meta-bar .updated{font-size:12px;color:var(--muted);margin-bottom:6px}
-  .meta-bar .updated b{color:var(--ink)}
-  .meta-bar .disclaimer{font-size:12px;color:#6e5a3a;background:#fff7e6;border:1px solid #efe1bd;
+  /* meta bar (last updated + coverage disclaimer) — sits on the dark backdrop */
+  .meta-bar{max-width:880px;margin:0 auto;padding:10px 4px 2px}
+  .meta-bar .updated{font-size:12px;color:var(--on-dark);margin-bottom:6px}
+  .meta-bar .updated b{color:#fff}
+  .meta-bar .disclaimer{font-size:12px;color:var(--on-dark-strong);
+    background:rgba(124,92,255,0.16);border:1px solid rgba(124,92,255,0.4);
     border-radius:10px;padding:9px 12px;line-height:1.45}
-  .meta-bar .disclaimer b{color:var(--ink)}
+  .meta-bar .disclaimer b{color:var(--gold)}
 </style>
 </head>
 <body>
@@ -139,16 +163,15 @@ const CONFIG = {
 
 <!-- ============ App ============ -->
 <div id="app" style="display:none">
-  <header class="banner">
-    <div class="banner-inner">
+  <div class="wrap">
+    <header class="banner">
+      <img class="hero" src="images/banner.jpeg" alt="Aarghh! — Arleena's Actually Really Good Homework Helper">
+    </header>
+    <div class="greet-row">
       <img class="egg" src="images/egg-hello.png" alt="Egg the eagle waving">
-      <div>
-        <h1>Aarghh<span class="bang">!</span></h1>
-        <p class="sub">Arleena's Actually Really Good Homework Helper</p>
-        <div class="bubble" id="greeting">Yo Arleena! Egg here. Let's check what's on, dude.</div>
-      </div>
+      <div class="bubble" id="greeting">Yo Arleena! Egg here. Let's check what's on, dude.</div>
     </div>
-  </header>
+  </div>
 
   <div class="meta-bar">
     <div class="updated" id="lastUpdated"></div>
