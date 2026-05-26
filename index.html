@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aarghh! — Arleena's homework helper</title>
+<style>
+  :root{
+    --brown:#6b4a2b; --brown-dark:#4f3720; --cream:#f7f0e3; --gold:#f4b740;
+    --ink:#2b2117; --muted:#8a7a66; --bg:#fbf7ef; --card:#ffffff;
+    --shadow:0 6px 18px rgba(79,55,32,.12); --radius:16px;
+    --english:#7c5cff; --maths:#2f80ed; --science:#27ae60;
+    --pe:#f2994a; --visual-arts:#eb5ca0; --musicianship:#11999e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.5}
+  .wrap{max-width:880px;margin:0 auto;padding:0 16px 64px}
+
+  /* ---------- Banner ---------- */
+  header.banner{background:linear-gradient(135deg,var(--brown) 0%,var(--brown-dark) 100%);
+    color:var(--cream);position:relative;overflow:hidden}
+  .banner-inner{max-width:880px;margin:0 auto;padding:18px 16px;display:flex;align-items:center;gap:16px}
+  .banner img.egg{height:120px;width:auto;filter:drop-shadow(0 4px 8px rgba(0,0,0,.25));flex:none}
+  .banner h1{margin:0;font-size:30px;letter-spacing:.5px}
+  .banner h1 .bang{color:var(--gold)}
+  .banner .sub{margin:2px 0 0;font-size:13px;opacity:.85}
+  .bubble{margin-top:8px;background:var(--cream);color:var(--ink);display:inline-block;
+    padding:8px 12px;border-radius:14px;border-bottom-left-radius:2px;font-size:14px;box-shadow:var(--shadow)}
+
+  /* ---------- Tabs ---------- */
+  nav.tabs{position:sticky;top:0;z-index:5;background:var(--bg);
+    border-bottom:1px solid #eaecd00;box-shadow:0 2px 8px rgba(79,55,32,.06)}
+  .tabs-inner{max-width:880px;margin:0 auto;display:flex;gap:4px;padding:8px 12px;
+    overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tab{flex:1 0 auto;border:none;background:transparent;padding:10px 12px;border-radius:12px;
+    font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+  .tab.active{background:var(--brown);color:var(--cream)}
+
+  /* ---------- Cards ---------- */
+  .view{padding-top:18px}
+  .view-head{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+  .view-head img{height:84px;width:auto;flex:none}
+  .view-head .speak{background:var(--card);border-radius:14px;padding:10px 14px;
+    box-shadow:var(--shadow);font-size:15px}
+  .section-title{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
+    margin:22px 4px 8px}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:14px 16px;margin-bottom:10px;border-left:5px solid #ccc;position:relative}
+  .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .chip{font-size:11px;font-weight:700;color:#fff;padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .card h3{margin:6px 0 2px;font-size:16px}
+  .meta{font-size:13px;color:var(--muted)}
+  .due{font-size:13px;font-weight:700}
+  .due.soon{color:#d35400}.due.over{color:#c0392b}.due.ok{color:#27ae60}
+  .badge-new{background:var(--gold);color:#3a2b10;font-size:10px;font-weight:800;
+    padding:2px 7px;border-radius:20px;margin-left:6px;vertical-align:middle}
+  .formal{font-size:11px;font-weight:700;color:#c0392b;border:1px solid #c0392b;
+    padding:1px 6px;border-radius:6px;margin-left:6px}
+  .lesson-body,.term-body{font-size:14px;margin-top:6px;white-space:pre-wrap}
+  .adesc{font-size:13.5px;color:#5c4f3d;margin-top:7px;line-height:1.45}
+  /* term-overview detail */
+  .term-topics{margin:10px 0 0;padding-left:18px;font-size:14px}
+  .term-topics li{margin:3px 0}
+  .term-assess{margin-top:12px;border-top:1px dashed #e7ddca;padding-top:8px}
+  .ta-title{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px}
+  .ta-row{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:3px 0}
+  .ta-row .meta{white-space:nowrap}
+  /* equations */
+  .eqs{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+  .eq{background:#eef4fd;border:1px solid #d4e3fb;color:#1c3d6e;
+    font-family:"SFMono-Regular",Consolas,Menlo,monospace;font-size:14px;
+    padding:8px 11px;border-radius:8px;white-space:pre-wrap}
+  /* space fact */
+  .space-card{text-align:center;padding:24px 20px;background:linear-gradient(160deg,#1b2452,#2d3a7a);
+    color:#eef1ff;border-left-color:#7c5cff!important}
+  .space-card .ssub{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:#aeb6ee}
+  .space-card .sfact{font-size:19px;line-height:1.55;margin-top:10px}
+
+  .empty{text-align:center;padding:30px 10px;color:var(--muted)}
+  .empty img{height:150px;width:auto}
+  .empty p{font-size:15px;margin:10px 0 0}
+
+  /* ---------- Login ---------- */
+  #login{display:none;max-width:360px;margin:60px auto;background:var(--card);
+    padding:26px;border-radius:var(--radius);box-shadow:var(--shadow);text-align:center}
+  #login img{height:130px}
+  #login input{width:100%;padding:11px;margin:6px 0;border:1px solid #e4d9c5;border-radius:10px;font-size:15px}
+  #login button{width:100%;padding:12px;margin-top:8px;border:none;border-radius:10px;
+    background:var(--brown);color:var(--cream);font-size:15px;font-weight:700;cursor:pointer}
+  #login .err{color:#c0392b;font-size:13px;min-height:18px;margin-top:6px}
+  .foot{text-align:center;font-size:12px;color:var(--muted);margin-top:30px}
+  .demo-flag{background:var(--gold);color:#3a2b10;text-align:center;font-size:12px;
+    font-weight:700;padding:5px}
+  /* meta bar (last updated + coverage disclaimer) */
+  .meta-bar{max-width:880px;margin:0 auto;padding:10px 16px 2px}
+  .meta-bar .updated{font-size:12px;color:var(--muted);margin-bottom:6px}
+  .meta-bar .updated b{color:var(--ink)}
+  .meta-bar .disclaimer{font-size:12px;color:#6e5a3a;background:#fff7e6;border:1px solid #efe1bd;
+    border-radius:10px;padding:9px 12px;line-height:1.45}
+  .meta-bar .disclaimer b{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<!-- ============ CONFIG: fill these before deploying ============ -->
+<script>
+const CONFIG = {
+  SUPABASE_URL: "https://rkaqmjzofqakrdnoxrvg.supabase.co",   // <-- from Supabase (Part A step 5)
+  SUPABASE_PUBLISHABLE_KEY: "sb_publishable_vcbMDl8kaR2ySPBEnBKaeA_X3LPsg6Q", // <-- publishable/anon key ONLY (never the secret key)
+  USE_DEMO_DATA: false,  // <-- TRUE = bundled sample data for preview. SET TO false BEFORE PUBLIC DEPLOY (see deployment-guide.md)
+  LAST_UPDATED: "2026-05-26",  // demo only; in live mode the date is taken from the most recent synced row
+  LOGIN_DOMAIN: "aarghh.app"   // Arleena types just a username; the app appends @<this> to form the Supabase email (so her account = arleena@aarghh.app)
+};
+</script>
+
+<div id="demoFlag" class="demo-flag" style="display:none">PREVIEW MODE — showing bundled sample data. Set USE_DEMO_DATA=false and configure Supabase before deploying.</div>
+
+<!-- ============ Login (used only when not in demo mode) ============ -->
+<div id="login">
+  <img src="images/egg-hello.png" alt="Egg waving">
+  <h2 style="margin:6px 0">Aarghh!</h2>
+  <p style="font-size:13px;color:var(--muted);margin:0 0 10px">Yo! Log in to see your stuff, dude.</p>
+  <input id="username" type="text" placeholder="Username" autocomplete="username" autocapitalize="off">
+  <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+  <button onclick="doLogin()">Let's go</button>
+  <div class="err" id="loginErr"></div>
+</div>
+
+<!-- ============ App ============ -->
+<div id="app" style="display:none">
+  <header class="banner">
+    <div class="banner-inner">
+      <img class="egg" src="images/egg-hello.png" alt="Egg the eagle waving">
+      <div>
+        <h1>Aarghh<span class="bang">!</span></h1>
+        <p class="sub">Arleena's Actually Really Good Homework Helper</p>
+        <div class="bubble" id="greeting">Yo Arleena! Egg here. Let's check what's on, dude.</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="meta-bar">
+    <div class="updated" id="lastUpdated"></div>
+    <div class="disclaimer" id="coverage"></div>
+  </div>
+
+  <nav class="tabs">
+    <div class="tabs-inner">
+      <button class="tab active" data-tab="assessments" onclick="showTab('assessments')">Assessments</button>
+      <button class="tab" data-tab="lessons" onclick="showTab('lessons')">Lessons</button>
+      <button class="tab" data-tab="terms" onclick="showTab('terms')">Term overviews</button>
+      <button class="tab" data-tab="equations" onclick="showTab('equations')">Maths equations</button>
+      <button class="tab" data-tab="space" onclick="showTab('space')">Space fact</button>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <div id="view-assessments" class="view"></div>
+    <div id="view-lessons" class="view" style="display:none"></div>
+    <div id="view-terms" class="view" style="display:none"></div>
+    <div id="view-equations" class="view" style="display:none"></div>
+    <div id="view-space" class="view" style="display:none"></div>
+    <div class="foot">Aarghh! — fed from the School work folder. Egg is a fictional character. Surf's up.</div>
+  </div>
+</div>
+
+<!-- ============ Data + logic ============ -->
+<script>
+/* ---------- Subjects (categories) ---------- */
+const SUBJECTS = {
+  "english":      {name:"English",      color:"var(--english)"},
+  "maths":        {name:"Maths",        color:"var(--maths)"},
+  "science":      {name:"Science",      color:"var(--science)"},
+  "pe":           {name:"PE",           color:"var(--pe)"},
+  "visual-arts":  {name:"Visual Arts",  color:"var(--visual-arts)"},
+  "musicianship": {name:"Musicianship", color:"var(--musicianship)"}
+};
+function subjName(id){return (SUBJECTS[id]||{}).name || id;}
+function subjColor(id){return (SUBJECTS[id]||{}).color || "#999";}
+
+/* ---------- Demo data (real assessments from assessments.md; lessons/terms are samples) ---------- */
+const DEMO = {
+  assessments: [
+    {subject:"pe",title:"Healthy Lifestyles Unit",due_date:"2026-05-22",term:2,formal:false,status:"upcoming",
+     desc:"Reflect on your own physical activity and wellbeing — usually a journal/log plus a written response. It tests whether you understand what makes a lifestyle healthy and can apply it to yourself."},
+    {subject:"science",title:"Nuclear Radiation SHE task",due_date:"2026-05-25",term:2,formal:false,status:"upcoming",isNew:true,
+     desc:"A Science as a Human Endeavour task: research how nuclear radiation is used and weigh up its benefits and risks for society. It tests evaluating evidence and arguing a science-and-society case, not just recall."},
+    {subject:"musicianship",title:"Choir — Part Test (in pairs)",due_date:"2026-05-25",term:2,formal:false,status:"upcoming",isNew:true,
+     desc:"A practical singing test in pairs — sing your assigned vocal part, likely from memory. It tests pitch accuracy and holding your part against someone else."},
+    {subject:"visual-arts",title:"Tiled Tonal Artwork",due_date:"2026-05-29",term:2,formal:false,status:"upcoming",
+     desc:"A practical artwork about tone: break an image into tiles and render light through to dark across them. It tests your control of shading and keeping values consistent."},
+    {subject:"musicianship",title:"Special Music — Solo Performance (Term 2)",due_date:"2026-06-17",term:2,formal:false,status:"upcoming",
+     desc:"Perform your chosen solo piece live. It tests technical accuracy, musicality and stage presence."},
+    {subject:"musicianship",title:"Special Music — Solo Performance Discussion video (Term 2)",due_date:"2026-06-19",term:2,formal:false,status:"upcoming",
+     desc:"Record a video discussing your solo performance — your choices, what was tricky, and how you prepared. It tests reflecting on and analysing your own playing."},
+    {subject:"musicianship",title:"Special Music — Year 9 Studies Musical Website (Term 2)",due_date:"2026-06-19",term:2,formal:false,status:"upcoming",
+     desc:"Build a website for Music Studies presenting your research on a musical topic. It tests research, clear writing and how well you organise and present information."},
+    {subject:"musicianship",title:"Choir — Sight Singing test (individual)",due_date:"2026-06-22",term:2,formal:false,status:"upcoming",
+     desc:"An individual sight-singing test: you get unseen music and sing it on the spot. It tests reading notation and pitching accurately with no practice."},
+    {subject:"pe",title:"Outdoor Lifestyles Unit",due_date:"2026-07-30",term:3,formal:false,status:"upcoming",
+     desc:"A unit on outdoor and recreational activity — likely participation plus a written or reflective piece. It tests applying healthy-lifestyle ideas to the outdoors."},
+    {subject:"musicianship",title:"Band — Term 1 Part Test",due_date:"2026-03-18",term:1,formal:false,status:"awaiting_results"},
+    {subject:"visual-arts",title:"SA Refugee Week Poster — Analysis",due_date:"2026-03-27",term:1,formal:false,status:"awaiting_results"},
+    {subject:"visual-arts",title:"SA Refugee Week Poster — Final",due_date:"2026-04-07",term:1,formal:false,status:"awaiting_results"},
+    {subject:"english",title:"Robot Narrative Draft",due_date:"2026-04-09",term:1,formal:false,status:"awaiting_results"},
+    {subject:"science",title:"Solar Reflector Presentation",due_date:"2026-04-27",term:2,formal:false,status:"awaiting_results"},
+    {subject:"musicianship",title:"Special Music — Jazz Studies Term 2 Week 1 Work",due_date:"2026-05-01",term:2,formal:false,status:"awaiting_results"},
+    {subject:"english",title:"Poetry Techniques + Poster",due_date:"2026-05-08",term:2,formal:false,status:"awaiting_results"},
+    {subject:"english",title:"ROBOT Text Tasks",due_date:"2026-05-14",term:2,formal:false,status:"awaiting_results"},
+    {subject:"english",title:"Transformation Narrative + Writer's Statement ASTRA",due_date:"2026-05-14",term:2,formal:false,status:"awaiting_results"}
+  ],
+  // SAMPLE lessons — real ones come from the outline skill into data/lessons/*.md
+  lessons: [
+    {subject:"science",lesson_date:"2026-05-25",term:2,week:16,title:"Chemical Reactions Intro",
+     body:"Righto dude — this week atoms throw a party and swap partners. We recap chemical vs physical change, get our heads around chemical formulas, and use conservation of mass to see why we balance equations. Monday: molecules + the kit activity. Thursday: the conservation-of-mass prac."},
+    {subject:"english",lesson_date:"2026-05-25",term:2,week:16,title:"Transformation Narrative — editing",
+     body:"Time to polish that narrative, legend. We're tightening the transformation arc and lining up the writer's statement. Bring your draft — we surf through the feedback together."},
+    {subject:"maths",lesson_date:"2026-05-25",term:2,week:16,title:"Algebra — expanding brackets",
+     body:"Cruisy algebra session, dude. Expanding double brackets and spotting patterns. If the signs trip you up, that's normal — we slow it right down."}
+  ],
+  // SAMPLE term overviews — real ones come from the outline skill into data/term-overviews.md
+  termOverviews: [
+    {subject:"science",term:2,
+     body:"Righto Arleena — this term Science is all about chemical reactions and energy. You'll start with the building blocks (atoms, molecules, and the difference between a physical and a chemical change), then level up to writing and balancing chemical equations using conservation of mass. From there it's into energy transfer, and a Nuclear Radiation SHE task where you weigh up the science-and-society side of things. The big skills to nail: reading chemical formulas, balancing equations, and explaining your reasoning clearly.",
+     topics:["Atoms, molecules & chemical formulas","Physical vs chemical change","Balancing equations & conservation of mass","Energy transfer","Nuclear radiation (Science as a Human Endeavour task)"]},
+    {subject:"english",term:2,
+     body:"Term 2 English is a deep dive into the ROBOT transformation narrative and the craft behind it, dude. You'll study how writers build change across a story, draft your own transformation narrative with a writer's statement, then explore poetry techniques — imagery, rhythm and figurative language — building up to a poster. Heaps of focus on finding your own voice and editing like a pro.",
+     topics:["The ROBOT text & transformation narratives","Writing your own narrative + writer's statement","Poetry techniques: imagery, rhythm, figurative language","Poetry poster task","Editing & crafting voice"]},
+    {subject:"visual-arts",term:2,
+     body:"Visual Arts is all about tone this term. The headline piece is the Tiled Tonal Artwork, where you break an image into tiles and render light and shadow across each one. Expect work on value scales, blending, and patience — small careful steps that add up to something gnarly.",
+     topics:["Tonal value & value scales","Tiled Tonal Artwork (major piece)","Blending & shading techniques","Light and shadow observation"]}
+  ],
+  // SAMPLE maths equations by week — real ones come from a skill reading data/lessons/maths.md
+  mathsEquations: [
+    {week:16,dates:"19–22 May",term:2,topic:"Expanding & factorising",equations:[
+      "(a + b)(c + d) = ac + ad + bc + bd",
+      "(x + a)(x + b) = x² + (a + b)x + ab",
+      "a² − b² = (a − b)(a + b)"]},
+    {week:14,dates:"11–15 May",term:2,topic:"Linear relationships",equations:[
+      "y = mx + c",
+      "gradient  m = (y₂ − y₁) / (x₂ − x₁)",
+      "distance = √[(x₂ − x₁)² + (y₂ − y₁)²]"]},
+    {week:11,dates:"6–10 Apr",term:2,topic:"Pythagoras & surds",equations:[
+      "a² + b² = c²",
+      "c = √(a² + b²)",
+      "√a × √b = √(ab)"]},
+    {week:4,dates:"16–20 Feb",term:1,topic:"Statistics",equations:[
+      "mean  x̄ = Σx / n",
+      "range = max − min",
+      "IQR = Q₃ − Q₁"]}
+  ]
+};
+
+/* ---------- Date helpers ---------- */
+function today(){ return new Date(); }
+function parseD(s){ if(!s) return null; const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
+function fmt(s){ const d=parseD(s); if(!d) return "Date TBC";
+  return d.toLocaleDateString("en-AU",{weekday:"short",day:"numeric",month:"short"}); }
+function daysUntil(s){ const d=parseD(s); if(!d) return null;
+  const t=today(); t.setHours(0,0,0,0); return Math.round((d-t)/86400000); }
+function dueLabel(s){
+  const n=daysUntil(s); if(n===null) return {txt:"Date TBC",cls:"ok"};
+  if(n<0) return {txt:`${-n} day${-n===1?"":"s"} ago`,cls:"over"};
+  if(n===0) return {txt:"Due today!",cls:"soon"};
+  if(n===1) return {txt:"Due tomorrow",cls:"soon"};
+  if(n<=7) return {txt:`In ${n} days`,cls:"soon"};
+  return {txt:`In ${n} days`,cls:"ok"};
+}
+
+/* ---------- Get data (demo or Supabase) ---------- */
+async function getData(){
+  if(CONFIG.USE_DEMO_DATA){ DEMO.lastUpdated=CONFIG.LAST_UPDATED; return DEMO; }
+  const rows = await sbSelect("content");
+  const data={assessments:[],lessons:[],termOverviews:[],mathsEquations:[],lastUpdated:null};
+  for(const r of rows){
+    if(r.kind==="assessment") data.assessments.push({subject:r.subject_id,title:r.title,due_date:r.due_date,term:r.term,formal:r.is_formal,status:r.status});
+    else if(r.kind==="lesson") data.lessons.push({subject:r.subject_id,lesson_date:r.lesson_date,term:r.term,week:r.week,title:r.title,body:r.body});
+    else if(r.kind==="term_overview") data.termOverviews.push({subject:r.subject_id,term:r.term,body:r.body,topics:(r.topics||"").split("\n").filter(Boolean)});
+    else if(r.kind==="maths_equations") data.mathsEquations.push({subject:r.subject_id,week:r.week,term:r.term,dates:r.dates,topic:r.title,equations:(r.body||"").split("\n").filter(Boolean)});
+    if(r.updated_at && (!data.lastUpdated || r.updated_at>data.lastUpdated)) data.lastUpdated=r.updated_at;
+  }
+  return data;
+}
+
+/* ---------- Renderers ---------- */
+function fmtFull(s){ const d=parseD((s||"").slice(0,10)); if(!d) return "unknown";
+  return d.toLocaleDateString("en-AU",{weekday:"short",day:"numeric",month:"long",year:"numeric"}); }
+
+function renderMeta(data){
+  document.getElementById("lastUpdated").innerHTML = "Last updated: <b>"+fmtFull(data.lastUpdated)+"</b>";
+  const have=new Set();
+  (data.assessments||[]).forEach(a=>have.add(a.subject));
+  (data.lessons||[]).forEach(a=>have.add(a.subject));
+  (data.termOverviews||[]).forEach(a=>have.add(a.subject));
+  if((data.mathsEquations||[]).length) have.add("maths");
+  const names=Object.keys(SUBJECTS).filter(s=>have.has(s)).map(subjName);
+  const covers=names.length?names.join(", "):"—";
+  document.getElementById("coverage").innerHTML =
+    `This app's got your back for ${covers} (Music = Choir, Band &amp; Special Music, all rolled together). `+
+    `For any other subjects, you gotta look those up yourself, dude. `+
+    `Heads up: the lesson, term and equation bits are auto-summaries — give SEQTA a squiz for the real deal.`;
+}
+
+function card(a){
+  const due=dueLabel(a.due_date);
+  const newBadge = a.isNew ? '<span class="badge-new">NEW</span>' : '';
+  const formal = a.formal ? '<span class="formal">CAT/EXAM</span>' : '';
+  return `<div class="card" style="border-left-color:${subjColor(a.subject)}">
+    <div class="top">
+      <span class="chip" style="background:${subjColor(a.subject)}">${subjName(a.subject)}</span>
+      <span class="due ${due.cls}">${due.txt}</span>
+    </div>
+    <h3>${a.title}${formal}${newBadge}</h3>
+    <div class="meta">Due ${fmt(a.due_date)} · Term ${a.term||"?"}</div>
+    ${a.desc?`<div class="adesc">${a.desc}</div>`:""}
+  </div>`;
+}
+
+function renderAssessments(data){
+  const up=data.assessments.filter(a=>a.status==="upcoming")
+    .sort((x,y)=>(parseD(x.due_date)||0)-(parseD(y.due_date)||0));
+  const aw=data.assessments.filter(a=>a.status==="awaiting_results")
+    .sort((x,y)=>(parseD(y.due_date)||0)-(parseD(x.due_date)||0));
+  let html=`<div class="view-head">
+    <img src="images/egg-calendar.png" alt="Egg with a calendar">
+    <div class="speak">Here's what's coming up, dude. Soonest first — don't get dumped by a deadline!</div>
+  </div>`;
+  if(up.length){ html+=`<div class="section-title">Upcoming</div>`+up.map(card).join(""); }
+  else { html+=`<div class="empty"><img src="images/egg-chill.png" alt="Egg relaxing"><p>All clear, dude — nothing due right now. Go catch a wave.</p></div>`; }
+  if(aw.length){ html+=`<div class="section-title">Submitted — waiting on results</div>`+aw.map(card).join(""); }
+  document.getElementById("view-assessments").innerHTML=html;
+}
+
+function renderLessons(data){
+  let html=`<div class="view-head">
+    <img src="images/egg-teacher.png" alt="Egg as a teacher">
+    <div class="speak">Lesson rundowns by subject, dude. Here's the gist of what you covered.</div>
+  </div>`;
+  const bySub={};
+  data.lessons.forEach(l=>{(bySub[l.subject]=bySub[l.subject]||[]).push(l);});
+  const subs=Object.keys(SUBJECTS).filter(s=>bySub[s]&&bySub[s].length);
+  if(!subs.length){
+    html+=`<div class="empty"><img src="images/egg-hmm.png" alt="Egg puzzled"><p>No lesson outlines yet, dude. They'll show up once the lessons get summarised.</p></div>`;
+  } else {
+    subs.forEach(s=>{
+      html+=`<div class="section-title" style="color:${subjColor(s)}">${subjName(s)}</div>`;
+      bySub[s].sort((a,b)=>(parseD(b.lesson_date)||0)-(parseD(a.lesson_date)||0)).forEach(l=>{
+        html+=`<div class="card" style="border-left-color:${subjColor(s)}">
+          <h3>${l.title}</h3>
+          <div class="meta">${fmt(l.lesson_date)} · Week ${l.week||"?"} · Term ${l.term||"?"}</div>
+          <div class="lesson-body">${l.body||""}</div></div>`;
+      });
+    });
+  }
+  document.getElementById("view-lessons").innerHTML=html;
+}
+
+function renderTerms(data){
+  let html=`<div class="view-head">
+    <img src="images/egg-books.png" alt="Egg holding books">
+    <div class="speak">The big picture for each subject this term, dude.</div>
+  </div>`;
+  if(!data.termOverviews.length){
+    html+=`<div class="empty"><img src="images/egg-hmm.png" alt="Egg puzzled"><p>No term overviews yet — they're on the way.</p></div>`;
+  } else {
+    data.termOverviews.slice().sort((a,b)=>(b.term-a.term)||subjName(a.subject).localeCompare(subjName(b.subject))).forEach(t=>{
+      const topics=(t.topics&&t.topics.length)
+        ? `<ul class="term-topics">${t.topics.map(x=>`<li>${x}</li>`).join("")}</ul>` : "";
+      const rel=(data.assessments||[]).filter(a=>a.subject===t.subject && a.term===t.term)
+        .sort((a,b)=>(parseD(a.due_date)||0)-(parseD(b.due_date)||0));
+      const assess = rel.length
+        ? `<div class="term-assess"><div class="ta-title">Assessed this term</div>`+
+          rel.map(a=>`<div class="ta-row"><span>${a.title}</span><span class="meta">${fmt(a.due_date)}</span></div>`).join("")+`</div>`
+        : "";
+      html+=`<div class="card" style="border-left-color:${subjColor(t.subject)}">
+        <div class="top"><span class="chip" style="background:${subjColor(t.subject)}">${subjName(t.subject)}</span>
+        <span class="meta">Term ${t.term}</span></div>
+        <div class="term-body">${t.body||""}</div>
+        ${topics}
+        ${assess}</div>`;
+    });
+  }
+  document.getElementById("view-terms").innerHTML=html;
+}
+
+function renderEquations(data){
+  let html=`<div class="view-head">
+    <img src="images/egg-thumbsup.png" alt="Egg giving a thumbs up">
+    <div class="speak">Your maths formula cheat-sheet, week by week. Lock these in and you're sweet, dude.</div>
+  </div>`;
+  const eq=(data.mathsEquations||[]).slice().sort((a,b)=>(b.week||0)-(a.week||0));
+  if(!eq.length){
+    html+=`<div class="empty"><img src="images/egg-hmm.png" alt="Egg puzzled"><p>No equations loaded yet, dude — they'll show up once Maths gets summarised.</p></div>`;
+  } else {
+    eq.forEach(w=>{
+      html+=`<div class="card" style="border-left-color:var(--maths)">
+        <div class="top"><span class="chip" style="background:var(--maths)">Week ${w.week}</span>
+        <span class="meta">${w.dates?w.dates+" · ":""}Term ${w.term||"?"}</span></div>
+        <h3>${w.topic||""}</h3>
+        <div class="eqs">${(w.equations||[]).map(e=>`<code class="eq">${e}</code>`).join("")}</div>
+      </div>`;
+    });
+  }
+  document.getElementById("view-equations").innerHTML=html;
+}
+
+/* ---------- Space fact (rotates with each data update) ---------- */
+const SPACE_FACTS = [
+  "A day on Venus is longer than its whole year — it spins slower than it orbits the Sun.",
+  "A teaspoon of neutron-star material would weigh about a billion tonnes.",
+  "There are more stars in the universe than grains of sand on every beach on Earth.",
+  "The footprints on the Moon could last millions of years — there's no wind to wipe them away.",
+  "Jupiter's Great Red Spot is a storm wider than the entire Earth, and it's raged for centuries.",
+  "Saturn is so light it would float in water — if you could find a big enough bathtub.",
+  "The Sun makes up about 99.8% of all the mass in the solar system.",
+  "Sunlight takes about 8 minutes and 20 seconds to travel from the Sun to Earth.",
+  "A year on Mercury lasts just 88 Earth days.",
+  "Space is totally silent — there's no air to carry sound waves.",
+  "Olympus Mons on Mars is the tallest known volcano — nearly three times the height of Mt Everest.",
+  "About one million Earths could fit inside the Sun.",
+  "Scientists think it rains diamonds inside Neptune and Uranus.",
+  "Venus is the hottest planet (around 465°C), even though Mercury sits closer to the Sun.",
+  "The International Space Station laps the Earth roughly every 90 minutes — 16 sunrises a day.",
+  "Astronauts can grow up to 5 cm taller in space as their spines stretch without gravity.",
+  "The Moon drifts about 3.8 cm further from Earth every year.",
+  "Stars don't really twinkle — our atmosphere bends their light and makes it shimmer.",
+  "The coldest known spot in the universe is the Boomerang Nebula, about -272°C.",
+  "A black hole's gravity is so strong that not even light can escape it.",
+  "The universe is roughly 13.8 billion years old.",
+  "Mars has seasons like Earth, because it's tilted on its axis at a similar angle.",
+  "The Sun is actually white — it only looks yellow through Earth's atmosphere.",
+  "The Milky Way and the Andromeda galaxy are on a slow collision course, billions of years away."
+];
+function hashStr(s){ let h=0; s=String(s||""); for(let i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))>>>0; } return h; }
+function renderSpace(data){
+  const fact = SPACE_FACTS.length ? SPACE_FACTS[hashStr(data.lastUpdated||"")%SPACE_FACTS.length] : "";
+  document.getElementById("view-space").innerHTML=`
+    <div class="view-head">
+      <img src="images/egg-chill.png" alt="Egg chilling">
+      <div class="speak">Yo Arleena — here's your space fact for this update, dude. A fresh one drops every time Aarghh! refreshes.</div>
+    </div>
+    <div class="card space-card">
+      <div class="ssub">Did you know...</div>
+      <div class="sfact">${fact}</div>
+    </div>`;
+}
+
+/* ---------- Tabs ---------- */
+function showTab(name){
+  const tabs=["assessments","lessons","terms","equations","space"];
+  if(!tabs.includes(name)) name="assessments";
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.tab===name));
+  tabs.forEach(t=>{const el=document.getElementById("view-"+t); if(el) el.style.display=(t===name)?"":"none";});
+  try{ localStorage.setItem("aarghh_tab",name); }catch(e){}
+}
+
+/* ---------- Supabase (only used when USE_DEMO_DATA = false) ---------- */
+function sbHeaders(){
+  const h={"apikey":CONFIG.SUPABASE_PUBLISHABLE_KEY,"Content-Type":"application/json"};
+  let tok=null; try{ tok=localStorage.getItem("aarghh_token"); }catch(e){}
+  if(tok) h["Authorization"]="Bearer "+tok;
+  return h;
+}
+async function sbSelect(table){
+  const r=await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/${table}?select=*`,{headers:sbHeaders()});
+  if(!r.ok) throw new Error("read failed "+r.status);
+  return r.json();
+}
+async function doLogin(){
+  const uname=document.getElementById("username").value.trim().toLowerCase();
+  const email=uname.includes("@")?uname:uname+"@"+CONFIG.LOGIN_DOMAIN;
+  const password=document.getElementById("password").value;
+  const errEl=document.getElementById("loginErr"); errEl.textContent="";
+  try{
+    const r=await fetch(`${CONFIG.SUPABASE_URL}/auth/v1/token?grant_type=password`,
+      {method:"POST",headers:{"apikey":CONFIG.SUPABASE_PUBLISHABLE_KEY,"Content-Type":"application/json"},
+       body:JSON.stringify({email,password})});
+    const j=await r.json();
+    if(!r.ok||!j.access_token){ errEl.textContent=j.error_description||j.msg||"Login failed"; return; }
+    try{ localStorage.setItem("aarghh_token",j.access_token); }catch(e){}
+    boot();
+  }catch(e){ errEl.textContent="Network error — try again"; }
+}
+
+/* ---------- Boot ---------- */
+async function boot(){
+  const loggedIn = (()=>{try{return !!localStorage.getItem("aarghh_token");}catch(e){return false;}})();
+  if(!CONFIG.USE_DEMO_DATA && !loggedIn){
+    document.getElementById("login").style.display="block";
+    document.getElementById("app").style.display="none";
+    return;
+  }
+  document.getElementById("login").style.display="none";
+  document.getElementById("app").style.display="block";
+  if(CONFIG.USE_DEMO_DATA) document.getElementById("demoFlag").style.display="block";
+  try{
+    const data=await getData();
+    renderMeta(data); renderAssessments(data); renderLessons(data); renderTerms(data); renderEquations(data); renderSpace(data);
+    const next=data.assessments.filter(a=>a.status==="upcoming").map(a=>daysUntil(a.due_date)).filter(n=>n!==null&&n>=0).sort((a,b)=>a-b)[0];
+    if(next!==undefined){
+      const g=next===0?"You've got something due today, dude — let's get on it!":
+              next<=3?`Heads up — something's due in ${next} day${next===1?"":"s"}. We've got this.`:
+              "Nothing urgent today. Cruisy. Let's stay ahead of it.";
+      document.getElementById("greeting").textContent="Yo Arleena! "+g;
+    }
+    let last="assessments"; try{last=localStorage.getItem("aarghh_tab")||"assessments";}catch(e){}
+    showTab(last);
+  }catch(e){
+    document.getElementById("view-assessments").innerHTML=
+      `<div class="empty"><img src="images/egg-hmm.png" alt="Egg puzzled"><p>Hmm, couldn't load your stuff, dude. Try refreshing.</p></div>`;
+  }
+}
+boot();
+</script>
+</body>
+</html>
