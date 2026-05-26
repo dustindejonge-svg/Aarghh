@@ -464,6 +464,13 @@ function sbHeaders(){
 }
 async function sbSelect(table){
   const r=await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/${table}?select=*`,{headers:sbHeaders()});
+  if(r.status===401){
+    // Stored token has expired — wipe it and bounce back to the login screen.
+    try{ localStorage.removeItem("aarghh_token"); }catch(e){}
+    const err=new Error("expired");
+    err.code=401;
+    throw err;
+  }
   if(!r.ok) throw new Error("read failed "+r.status);
   return r.json();
 }
@@ -507,8 +514,16 @@ async function boot(){
     let last="assessments"; try{last=localStorage.getItem("aarghh_tab")||"assessments";}catch(e){}
     showTab(last);
   }catch(e){
+    if(e && e.code===401){
+      // Token expired — show the login screen again instead of a confusing error.
+      document.getElementById("login").style.display="block";
+      document.getElementById("app").style.display="none";
+      const errEl=document.getElementById("loginErr");
+      if(errEl) errEl.textContent="Session expired, dude — log in again.";
+      return;
+    }
     document.getElementById("view-assessments").innerHTML=
-      `<div class="empty"><img src="images/egg-hmm.png" alt="Egg puzzled"><p>Hmm, couldn't load your stuff, dude. Try refreshing.</p></div>`;
+      `<div class="empty"><img src="images/egg-hmm.png" alt="Egg puzzled"><p>Hmm, couldn't load your stuff, dude. Try refreshing.</p><p style="font-size:12px;color:#888">(${(e&&e.message)||"unknown error"})</p></div>`;
   }
 }
 boot();
