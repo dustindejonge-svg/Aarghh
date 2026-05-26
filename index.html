@@ -58,7 +58,8 @@
   .view{padding-top:18px}
   .view-head{display:flex;align-items:center;gap:14px;margin-bottom:12px}
   .view-head img{height:84px;width:auto;flex:none}
-  .view-head .speak{background:var(--card);border-radius:14px;padding:10px 14px;
+  .view-head .speak{background:var(--card);color:var(--ink);
+    border-radius:14px;padding:10px 14px;
     box-shadow:var(--shadow);font-size:15px}
   .section-title{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--gold);
     margin:22px 4px 8px;text-shadow:0 1px 4px rgba(0,0,0,0.5)}
@@ -72,7 +73,8 @@
   .subj-pill:hover{border-color:rgba(244,205,88,0.5)}
   .subj-pill.active{color:#fff;box-shadow:0 4px 14px rgba(0,0,0,0.4)}
   .subj-pill.all.active{background:var(--gold);color:#1d1a1f}
-  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+  .card{background:var(--card);color:var(--ink);
+    border-radius:var(--radius);box-shadow:var(--shadow);
     padding:14px 16px;margin-bottom:10px;border-left:5px solid #ccc;position:relative}
   .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
   .chip{font-size:11px;font-weight:700;color:#fff;padding:3px 9px;border-radius:20px;white-space:nowrap}
@@ -104,7 +106,7 @@
   .space-card .ssub{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:#aeb6ee}
   .space-card .sfact{font-size:19px;line-height:1.55;margin-top:10px}
 
-  .empty{text-align:center;padding:30px 10px;color:var(--muted)}
+  .empty{text-align:center;padding:30px 10px;color:var(--on-dark)}
   .empty img{height:150px;width:auto}
   .empty p{font-size:15px;margin:10px 0 0}
 
@@ -351,10 +353,10 @@ function renderMeta(data){
   if((data.mathsEquations||[]).length) have.add("maths");
   const names=Object.keys(SUBJECTS).filter(s=>have.has(s)).map(subjName);
   const covers=names.length?names.join(", "):"—";
-  document.getElementById("coverage").innerHTML =
-    `This app's got your back for ${covers} (Music = Choir, Band &amp; Special Music, all rolled together). `+
-    `For any other subjects, you gotta look those up yourself, dude. `+
-    `Heads up: the lesson, term and equation bits are auto-summaries — give SEQTA a squiz for the real deal.`;
+  // Pick a random disclaimer on each page load — mix of silly, warning, real.
+  const msg = DISCLAIMERS[Math.floor(Math.random()*DISCLAIMERS.length)]
+    .replace(/{covers}/g, covers);
+  document.getElementById("coverage").innerHTML = msg;
 }
 
 function card(a){
@@ -470,6 +472,51 @@ function renderEquations(data){
   }
   document.getElementById("view-equations").innerHTML=html;
 }
+
+/* ---------- Disclaimers (rotate every page load — mix of silly, warning, real) ---------- */
+const DISCLAIMERS = [
+  // Real disclaimers — these actually inform Arleena
+  "This app's got your back for {covers}. For any other subjects, you gotta look those up yourself, dude.",
+  "Heads up: the lesson, term and equation bits are auto-summaries. Give SEQTA a squiz for the real deal.",
+  "Some lesson outlines are forecasts. The 🔮 means I'm guessing, dude — check SEQTA for the real one.",
+  "If a lesson here looks wrong, blame the AI eagle in the costume. Then check SEQTA.",
+  "Real talk: this app shows {covers}. Other subjects = your problem, surf's up.",
+  "If the Lessons tab is thin, the teacher hasn't posted yet. Refresh tomorrow.",
+  "Auto-summaries here, dude — for the real lesson brief, SEQTA's still the source of truth.",
+
+  // Dad / bug warnings
+  "Remember dude, your dad made this app — it's going to have bugs. Roll with it.",
+  "Reminder: dad's an enthusiastic amateur. Bugs WILL happen. Tell him about them.",
+  "If you spot a typo, tell dad. He'll fix it. Eventually.",
+  "This app is one (1) dad-and-AI project. Be patient with the rough edges.",
+  "Dad's reading this disclaimer right now and pretending he didn't.",
+  "If something breaks, it's probably my fault. Or dad's. Definitely not yours.",
+
+  // Silly / Egg lore
+  "Where did I leave my duck?",
+  "I once did my homework and it started a cult. Don't do that, Arlee.",
+  "I tried to learn calculus once. The duck is fine, don't worry.",
+  "Wait — did I leave the stove on? Or is that just Saturn?",
+  "Important update: Pluto is still small. Carry on.",
+  "Nine out of ten apples agree, this app is mostly right.",
+  "If you read this aloud three times, nothing happens. Promise.",
+  "Disclaimer: I am an eagle wearing an eagle costume. Trust me.",
+  "I once orbited a doughnut. Wouldn't recommend, no toppings.",
+  "If your duck is missing, check the assessments tab. Not really though.",
+  "Black holes scare me. Algebra scares me less. Barely.",
+  "I asked Saturn for advice. It just rolled its rings at me.",
+  "Egg's tip: water > caffeine. Surf's still up though.",
+  "Disclaimer: ducks. (Sorry, train of thought left without me.)",
+  "Pluto called. It just wanted to be friends.",
+  "I read a poem yesterday. Cried. Wrote a sonnet about a sandwich. Healing.",
+  "Mathematicians invented zero so we'd have something to say about my homework efforts.",
+  "If you ever meet a space duck, just nod respectfully. They know things.",
+  "I once tried to balance a chemical equation. The duck balanced it for me.",
+  "Reminder: the moon is not made of cheese, despite duck rumours.",
+  "I named my favourite asteroid Brenda. She's chill.",
+  "Egg's life advice: if in doubt, surf it out. Or do your homework. Either.",
+  "I lost my hat to a black hole once. Worth it for the photo, kind of.",
+];
 
 /* ---------- Space fact (rotates with each data update) ---------- */
 const SPACE_FACTS = [
