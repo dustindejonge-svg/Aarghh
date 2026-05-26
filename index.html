@@ -274,7 +274,7 @@ async function getData(){
   const rows = await sbSelect("content");
   const data={assessments:[],lessons:[],termOverviews:[],mathsEquations:[],lastUpdated:null};
   for(const r of rows){
-    if(r.kind==="assessment") data.assessments.push({subject:r.subject_id,title:r.title,due_date:r.due_date,term:r.term,formal:r.is_formal,status:r.status});
+    if(r.kind==="assessment") data.assessments.push({subject:r.subject_id,title:r.title,due_date:r.due_date,term:r.term,formal:r.is_formal,status:r.status,desc:r.body});
     else if(r.kind==="lesson") data.lessons.push({subject:r.subject_id,lesson_date:r.lesson_date,term:r.term,week:r.week,title:r.title,body:r.body});
     else if(r.kind==="term_overview") data.termOverviews.push({subject:r.subject_id,term:r.term,body:r.body,topics:(r.topics||"").split("\n").filter(Boolean)});
     else if(r.kind==="maths_equations") data.mathsEquations.push({subject:r.subject_id,week:r.week,term:r.term,dates:r.dates,topic:r.title,equations:(r.body||"").split("\n").filter(Boolean)});
