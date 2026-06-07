@@ -418,7 +418,10 @@ function renderAssessments(data){
   // Submitted assessments are dropped from the source files (see assessments.md
   // notes — "done = deleted" applies to both submitted and graded). We only
   // render the upcoming list now.
+  // Auto-expiry: anything more than 1 day past its due date is hidden, even if
+  // the source file hasn't been cleaned up yet. No due date = always shown.
   const up=data.assessments.filter(a=>a.status==="upcoming")
+    .filter(a=>{const n=daysUntil(a.due_date); return n===null||n>=-1;})
     .sort((x,y)=>(parseD(x.due_date)||0)-(parseD(y.due_date)||0));
   let html=`<div class="view-head">
     <img src="images/egg-calendar.png" alt="Egg with a calendar">
